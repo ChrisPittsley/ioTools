@@ -35,7 +35,7 @@ func usage(out io.Writer) {
 
 func handleError(err error, out io.Writer, rc int) {
 	if rc == syntaxError {
-		fmt.Fprintf(out, "%v\nDo 'writer -h' for usage\n", err)
+		fmt.Fprintf(out, "%v\nDo 'piper -h' for usage\n", err)
 	} else {
 		fmt.Fprintf(out, "%v\n", err)
 	}
@@ -234,8 +234,10 @@ func main() {
 			break
 		} else if err == io.EOF {
 			eof = true
+			b, err = output.Write(buf[:b])
+		} else {
+			b, err = output.Write(buf)
 		}
-		b, err = output.Write(buf)
 		bytesOut += b
 		if err != nil {
 			fmt.Fprintf(log, "Error encountered while writing: %v\n")
