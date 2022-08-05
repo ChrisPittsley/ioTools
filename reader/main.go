@@ -199,7 +199,7 @@ func main() {
 		}
 	}
 
-	buf := make([]byte, 0, size)
+	buf := make([]byte, size)
 	var bytes int
 	var input io.Reader
 	var err error
@@ -207,7 +207,7 @@ func main() {
 		input = os.Stdin
 	} else {
 		time.Sleep(openDelay)
-		input, err = os.OpenFile(fileName, os.O_RDONLY|os.O_CREATE, 0755)
+		input, err = os.Open(fileName)
 		if err != nil {
 			handleError(err, log, runtimeError)
 		}
