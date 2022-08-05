@@ -93,7 +93,7 @@ func main() {
 			var err error
 			c, err := strconv.ParseInt(os.Args[arg], 10, 32)
 			if err != nil {
-				handleError(fmt.Errorf("invalid argument for size '%s': %v", os.Args[arg], err), log, syntaxError)
+				handleError(fmt.Errorf("invalid argument for count '%s': %v", os.Args[arg], err), log, syntaxError)
 			}
 			count = int(c)
 		case "-d":
@@ -200,7 +200,6 @@ func main() {
 	}
 
 	buf := make([]byte, size)
-	var bytes int
 	var input io.Reader
 	var err error
 	if fileName == "" {
@@ -215,13 +214,14 @@ func main() {
 	time.Sleep(startDelay)
 	start := time.Now()
 	var runtime time.Duration
-	var itr, b int
+	var itr, bytes, b int
 	for err != io.EOF {
 		runtime = time.Since(start)
 		if runtime >= timeout && timeout != 0 {
 			break
 		}
 		b, err = input.Read(buf)
+		fmt.Printf("read %d bytes\n", b)
 		bytes += b
 		if err != nil && err != io.EOF {
 			fmt.Fprintf(log, "Error encountered while reading: %v\n")
