@@ -227,7 +227,8 @@ func main() {
 			fmt.Fprintf(log, "Error encountered while reading: %v\n")
 			rc = runtimeError
 			break
-		} else if err == io.EOF {
+		}
+		if err == io.EOF {
 			break
 		}
 		if count == 0 {
