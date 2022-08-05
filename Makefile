@@ -5,10 +5,10 @@ clean:
 	rm -rf bin/*
 
 reader:
-	go build -o bin/ ioTools/reader
+	go build -buildvcs=false -o bin/ ioTools/reader
 
 writer:
-	go build -o bin/ ioTools/writer
+	go build -buildvcs=false -o bin/ ioTools/writer
 
 piper:
-	go build -o bin/ ioTools/piper
+	go build -buildvcs=false -o bin/ ioTools/piper
