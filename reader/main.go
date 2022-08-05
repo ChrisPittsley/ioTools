@@ -221,7 +221,6 @@ func main() {
 			break
 		}
 		b, err = input.Read(buf)
-		fmt.Printf("read %d bytes\n", b)
 		bytes += b
 		if err != nil && err != io.EOF {
 			fmt.Fprintf(log, "Error encountered while reading: %v\n")
