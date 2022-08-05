@@ -215,30 +215,24 @@ func main() {
 	time.Sleep(startDelay)
 	start := time.Now()
 	var runtime time.Duration
-	x := 0
-	for {
+	var itr, b int
+	for err != io.EOF {
 		runtime = time.Since(start)
 		if runtime >= timeout && timeout != 0 {
 			break
 		}
-		b, err := input.Read(buf)
+		b, err = input.Read(buf)
 		bytes += b
 		if err != nil && err != io.EOF {
 			fmt.Fprintf(log, "Error encountered while reading: %v\n")
 			rc = runtimeError
 			break
 		}
-		if err == io.EOF {
-			break
-		}
-		if count == 0 {
-			continue
-		}
-		x += 1
-		if x == count {
-			break
-		}
 		time.Sleep(delay)
+		itr += 1
+		if itr == count {
+			break
+		}
 	}
 	var bytesRead string
 	if bytes > 1024*1024*10 {
