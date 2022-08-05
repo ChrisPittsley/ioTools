@@ -27,6 +27,7 @@ func usage(out io.Writer) {
 		"	 \tfirst. Suffix with ms, m, or h.\n" +
 		" -sd\tStart Delay: How many seconds to delay before beginning to read and write. Suffix with ms, m, or h.\n" +
 		" -l \tLog File: Filename to log to.\n" +
+		" -rc\tReturn Code: Return code on successful exit. Will be overridden by any errors. Default is 0." +
 		" -h \tHelp: Prints this text\n" +
 		"Returns 0 on success, 1 if a runtime error is encountered, 3 if bad arguments are passed.\n"
 	fmt.Fprintf(out, s)
@@ -189,6 +190,14 @@ func main() {
 				handleError(fmt.Errorf("invalid argument for start delay '%s': %v", s, err), log, syntaxError)
 			}
 			startDelay = time.Duration(t) * mult
+		case "-rc":
+			arg += 1
+			skip = true
+			returnCode, err := strconv.Atoi(os.Args[arg])
+			if err != nil {
+				handleError(fmt.Errorf("Invalid return code '%s': %v", os.Args[arg], err), log, syntaxError)
+			}
+			rc = returnCode
 		case "-h":
 			usage(log)
 		default:
