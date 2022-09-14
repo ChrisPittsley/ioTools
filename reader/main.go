@@ -215,7 +215,7 @@ func main() {
 	start := time.Now()
 	var runtime time.Duration
 	var itr, bytes, b int
-	for err != io.EOF {
+	for err != io.EOF && count > 0 {
 		runtime = time.Since(start)
 		if runtime >= timeout && timeout != 0 {
 			break
