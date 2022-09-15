@@ -44,7 +44,7 @@ func handleError(err error, out io.Writer, rc int) {
 func main() {
 	var fileName string
 	var size = 256 * 1024
-	var count int
+	var count = -1
 	var delay, openDelay, startDelay, timeout time.Duration
 	var log io.Writer = os.Stdout
 	var rc int
@@ -214,8 +214,8 @@ func main() {
 	time.Sleep(startDelay)
 	start := time.Now()
 	var runtime time.Duration
-	var itr, bytes, b int
-	for err != io.EOF && count > 0 {
+	var bytes, b int
+	for itr := 0; itr != count && err != io.EOF; itr += 1 {
 		runtime = time.Since(start)
 		if runtime >= timeout && timeout != 0 {
 			break
@@ -228,10 +228,6 @@ func main() {
 			break
 		}
 		time.Sleep(delay)
-		itr += 1
-		if itr == count {
-			break
-		}
 	}
 	var bytesRead string
 	if bytes > 1024*1024*10 {

@@ -14,11 +14,11 @@ const runtimeError = 1
 
 func usage(out io.Writer) {
 	s := "Writes to a file or stdout in a pattern depending on several parameters.\n" +
-		"By default, writes to stdout in 256k blocks until EOF\n" +
+		"By default, writes one 256k block to stdout\n" +
 		"Each block is prefixed with the iteration number (starting at 0) and is filled with zeros\n" +
 		" -f \tFile: file path to write to.\n" +
 		" -s \tSize: How many bytes to write each iteration. Suffix with k or m for kilobytes or megabytes.\n" +
-		" -c \tCount: How many writes to try before quitting, unless EOF is reached first.\n" +
+		" -c \tCount: How many writes to try before quitting.\n" +
 		" -d \tDelay: How many seconds to delay between writes. Suffix with ms, m, or h.\n" +
 		" -od\tOpen Delay: How many seconds to delay before opening the file. Suffix with ms, m, or h. Ignored\n" +
 		"    \twithout -f.\n" +
@@ -45,7 +45,7 @@ func handleError(err error, out io.Writer, rc int) {
 func main() {
 	var fileName string
 	var size = 256 * 1024
-	var count int
+	var count = 1
 	var delay, openDelay, startDelay, timeout time.Duration
 	var log = io.Discard
 	var rc int
@@ -216,9 +216,7 @@ func main() {
 	time.Sleep(startDelay)
 	start := time.Now()
 	var runtime time.Duration
-	x := 0
-	for {
-		buf[0] = byte(x)
+	for itr := 0; itr != count; itr += 1 {
 		runtime = time.Since(start)
 		if runtime >= timeout && timeout != 0 {
 			break
@@ -228,13 +226,6 @@ func main() {
 		if err != nil {
 			fmt.Fprintf(log, "Error encountered while writing: %v\n")
 			rc = runtimeError
-			break
-		}
-		if count == 0 {
-			continue
-		}
-		x += 1
-		if x == count {
 			break
 		}
 		time.Sleep(delay)
