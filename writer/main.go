@@ -22,6 +22,7 @@ func usage(out io.Writer) {
 		" -d \tDelay: How many seconds to delay between writes. Suffix with ms, m, or h.\n" +
 		" -od\tOpen Delay: How many seconds to delay before opening the file. Suffix with ms, m, or h. Ignored\n" +
 		"    \twithout -f.\n" +
+		" -ed\tExit Delay: How many seconds to delay before exiting. Suffix with ms, m, or h.\n" +
 		" -t \tTimeout: How many seconds (not counting Start Delay) to run before closing the file, unless Count is\n" +
 		"	 \treached first. Suffix with ms, m, or h.\n" +
 		" -sd\tStart Delay: How many seconds to delay before the first write. Suffix with ms, m, or h.\n" +
@@ -46,7 +47,7 @@ func main() {
 	var fileName string
 	var size = 256 * 1024
 	var count = 1
-	var delay, openDelay, startDelay, timeout time.Duration
+	var delay, openDelay, exitDelay, startDelay, timeout time.Duration
 	var log = io.Discard
 	var rc int
 
@@ -141,6 +142,28 @@ func main() {
 				handleError(fmt.Errorf("invalid argument for open delay '%s': %v", s, err), log, syntaxError)
 			}
 			openDelay = time.Duration(t) * mult
+		case "-ed":
+			arg += 1
+			skip = true
+			var mult = time.Second
+			var s string
+			if strings.HasSuffix(os.Args[arg], "ms") {
+				mult = time.Millisecond
+				s = strings.TrimSuffix(os.Args[arg], "ms")
+			} else if strings.HasSuffix(os.Args[arg], "m") {
+				mult = time.Minute
+				s = strings.TrimSuffix(os.Args[arg], "m")
+			} else if strings.HasSuffix(os.Args[arg], "h") {
+				mult = time.Hour
+				s = strings.TrimSuffix(os.Args[arg], "h")
+			} else {
+				s = os.Args[arg]
+			}
+			t, err := strconv.ParseInt(s, 10, 32)
+			if err != nil {
+				handleError(fmt.Errorf("invalid argument for open delay '%s': %v", s, err), log, syntaxError)
+			}
+			exitDelay = time.Duration(t) * mult
 		case "-t":
 			arg += 1
 			skip = true
@@ -239,5 +262,6 @@ func main() {
 		bytesWritten = fmt.Sprintf("%d bytes", bytes)
 	}
 	fmt.Fprintf(log, "Wrote %s in %s\n", bytesWritten, runtime.String())
+	time.Sleep(exitDelay)
 	os.Exit(rc)
 }
