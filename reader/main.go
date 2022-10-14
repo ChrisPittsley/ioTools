@@ -223,7 +223,7 @@ func main() {
 	}
 
 	buf := make([]byte, size)
-	var input io.Reader
+	var input *os.File
 	var err error
 	if fileName == "" {
 		input = os.Stdin
@@ -251,6 +251,10 @@ func main() {
 			break
 		}
 		time.Sleep(delay)
+	}
+	err = input.Close()
+	if err != nil {
+		handleError(err, log, runtimeError)
 	}
 	var bytesRead string
 	if bytes > 1024*1024*10 {

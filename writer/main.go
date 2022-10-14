@@ -225,7 +225,7 @@ func main() {
 
 	buf := make([]byte, size)
 	var bytes int
-	var output io.Writer
+	var output *os.File
 	var err error
 	if fileName == "" {
 		output = os.Stdout
@@ -252,6 +252,10 @@ func main() {
 			break
 		}
 		time.Sleep(delay)
+	}
+	err = output.Close()
+	if err != nil {
+		handleError(err, log, runtimeError)
 	}
 	var bytesWritten string
 	if bytes > 1024*1024*10 {
