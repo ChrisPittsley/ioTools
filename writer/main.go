@@ -253,10 +253,6 @@ func main() {
 		}
 		time.Sleep(delay)
 	}
-	err = output.Close()
-	if err != nil {
-		handleError(err, log, runtimeError)
-	}
 	var bytesWritten string
 	if bytes > 1024*1024*10 {
 		bytesWritten = fmt.Sprintf("%d megabytes", bytes/1024/1024)
